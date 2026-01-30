@@ -15,12 +15,17 @@ import { authClient } from "@/lib/auth-client"
 import {useForm} from "@tanstack/react-form"
 import z from "zod"
 import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
+
 
 const formSchema = z.object({
   password: z.string().min(8, "Minimum length is 8"),
   email: z.email(),
 });
 export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
+    const seachParams = useSearchParams();
+  const redirect = seachParams.get("redirectPath");
+  const router = useRouter();
   const form=useForm({
     defaultValues:{
    
@@ -31,19 +36,32 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log("value",value)
-      const toastId = toast.loading("Login in");
+
       try {
         const { data, error } = await authClient.signIn.email(value);
+        console.log(data)
 
-        if (error) {
-          toast.error(error.message, { id: toastId });
-          return;
+        if (data) {
+        toast.success("User Logged in Successfully");
+        if (redirect) {
+          router.push(redirect);
+        } else {
+          router.push("/dashboard");
         }
+      } else {
+        toast.error(error.message);
+      }
 
-        toast.success("User Logged in Successfully", { id: toastId });
+        // if (error) {
+        //   toast.error(error.message, { id: toastId });
+        //   return;
+        // }
+        
+        // toast.success("User Logged in Successfully", { id: toastId });
+
+
       } catch (err) {
-        toast.error("Something went wrong, please try again.", { id: toastId });
+        toast.error("Something went wrong, please try again.");
       }
     },
   })

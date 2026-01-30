@@ -22,15 +22,7 @@ const formSchema = z.object({
   email: z.email(),
 });
 export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
-    const handleLoginForm=async()=>{
-    const data=authClient.signIn.social({
-      provider:"google",
-      callbackURL:"http://localhost:3000/"
-    })
 
-    console.log({data})
-
-  }
   const form=useForm({
     defaultValues:{
       name:"",
@@ -109,6 +101,25 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
                   </Field>
                 )
               }}/>
+                            <form.Field name="name" children={(field)=>{
+                        const isInvalid =
+                        field.state.meta.isTouched && !field.state.meta.isValid;
+                      return(
+                        <Field>
+                                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                                <Input
+                                type="text"
+                                id={field.name}
+                                name={field.name}
+                                value={field.state.value}
+                                onChange={(e)=>field.handleChange(e.target.value)}
+                                />
+                          {isInvalid && (
+                            <FieldError errors={field.state.meta.errors} />
+                          )}
+                        </Field>
+                      )
+                    }}/>
                 <form.Field name="password" children={(field)=>{
                   const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
