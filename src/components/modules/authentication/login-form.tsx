@@ -46,7 +46,7 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
         if (redirect) {
           router.push(redirect);
         } else {
-          router.push("/dashboard");
+          router.push("/");
         }
       } else {
         toast.error(error.message);
