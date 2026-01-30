@@ -8,6 +8,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { getMedicine } from "@/actions/blog.action"
+import { medicineService } from "@/services/medicine.service"
+import MedicineCard from "@/components/modules/homepage/MedicineCard"
+
 
 const images = [
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5",
@@ -15,9 +19,12 @@ const images = [
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5",
 ]
 
-export default function Home() {
+export default async function Home() {
+  const {data} = await medicineService.getMedicines()
+  
+ 
   return (
-            <div className="container">
+            <div>
               {/* carosel div  */}
               <div className="mx-auto px-15 w-full">
                       <Carousel className="">
@@ -40,9 +47,21 @@ export default function Home() {
                     </Carousel>
               </div>
               {/* product div  */}
-              <div> 
-             
-
+              <div className="
+                  grid
+                  grid-cols-1
+                  sm:grid-cols-2
+                  md:grid-cols-3
+                  lg:grid-cols-4
+                  xl:grid-cols-5
+                  max-w-8xl
+                  mx-auto
+                  px-4
+                  gap-4
+                "> 
+                {data?.data?.map((medicine: any) => (
+                    <MedicineCard key={medicine.id} medicine={medicine}/>
+                ))}
               </div>
               {/* footer  */}
               <div>

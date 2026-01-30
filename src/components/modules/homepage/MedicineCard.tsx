@@ -9,19 +9,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BlogPost } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { Medicine } from "@/types";
 
 
-export default function BlogCard({  medicine }: { medicine: BlogPost }) {
+export default function MedicineCard({  medicine }: { medicine: Medicine }) {
+  console.log(medicine)
    
   return (
     <Card className="h-full overflow-hidden border-none shadow-md transition-all duration-300 pb-2">
-      <div className="relative h-56 w-full overflow-hidden">
-        {medicine.thumbnail ? (
+      <div className="relative h-30 w-full overflow-hidden">
+        {medicine.name ? (
           <Image
-            src={medicine.thumbnail}
-            alt={medicine.title}
+            src={medicine.image}
+            alt={medicine.name}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -34,49 +35,49 @@ export default function BlogCard({  medicine }: { medicine: BlogPost }) {
 
       <CardHeader className="pb-2">
         <CardTitle className="line-clamp-2 text-xl font-bold transition-colors group-hover:text-primary">
-          {medicine.title}
+          {medicine.name}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="mb-4 line-clamp-3 text-sm text-muted-foreground">
-          {medicine.content}
+        <p className="mb-2 line-clamp-3 text-sm text-muted-foreground">
+          {medicine.description}
         </p>
 
-        {medicine.tags && medicine.tags.length > 0 && (
+        {/* {medicine.tags && medicine.tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {medicine.tags.slice(0, 3).map((tag, index) => (
+            {medicine.tags.slice(0, 3).map((tag:any, index:any) => (
               <Badge key={index} variant="secondary" className="text-xs">
                 #{tag}
               </Badge>
             ))}
           </div>
-        )}
+        )} */}
       </CardContent>
 
-      <CardFooter className="flex items-center justify-between border-t p-4">
+      <CardFooter className="flex items-center justify-between border-t p-1">
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
             <Eye className="h-4 w-4" />
-            {medicine.views}
+            Available: {medicine.stock}
           </span>
 
           <span className="flex items-center gap-1">
             <MessageCircle className="h-4 w-4" />
-            {medicine._count?.comments || 0}
+            {/* {medicine._count?.comments || 0} */}
           </span>
 
-          {medicine.isFeatured && (
+          {/* {medicine.isFeatured && (
             <Badge
               variant="default"
               className="bg-yellow-500 hover:bg-yellow-600"
             >
               Featured
             </Badge>
-          )}
+          )} */}
         </div>
 
         <Link
-          href={`/blogs/${medicine.id}`}
+          href=""
           className="text-sm font-semibold text-primary group-hover:underline"
         >
           Read More &rarr;

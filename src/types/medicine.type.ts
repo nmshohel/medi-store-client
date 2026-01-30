@@ -10,3 +10,16 @@ export interface BlogPost {
   };
   isFeatured?: boolean;
 }
+export interface Medicine {
+  id: string
+  name: string
+  description: string
+  price: number
+  stock: number
+  manufacturer: string
+  image:string
+  // sellerId: string
+  // categoryId: string
+  // createdAt: string // ISO date string
+  // updatedAt: string // ISO date string
+}

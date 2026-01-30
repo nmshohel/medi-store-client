@@ -1,25 +1,20 @@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { blogService } from "@/services/blog.service"
+
 import { BlogPost } from "@/types";
 export async function generateStaticParams() {
-    const {data}=await blogService.getBlogPosts();
 
-
-    return data?.data?.map((blog:BlogPost)=>({id:blog.id})).splice(0,3)
     
 }
 
 export default async function BlogPage({params}:{params:Promise<{id:string}>}) {
-    const {id}=await params
-    const {data}=await blogService.getBlogById(id)
-    console.log(data)
+
   return (
     <article className="container mx-auto px-4 py-12 max-w-2xl">
       {/* Header */}
       <header className="mb-8">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-4">
-          {data.title}
+   
         </h1>
 
         <div className="flex items-center gap-3 text-muted-foreground text-sm">
@@ -27,7 +22,7 @@ export default async function BlogPage({params}:{params:Promise<{id:string}>}) {
           <span>·</span>
           <span> min read</span>
           <span>·</span>
-          <span>{data.views} views</span>
+          <span> views</span>
         </div>
       </header>
 
@@ -35,13 +30,13 @@ export default async function BlogPage({params}:{params:Promise<{id:string}>}) {
 
       {/* Content */}
       <div className="prose prose-lg dark:prose-invert max-w-none leading-relaxed text-foreground">
-        <p className="whitespace-pre-wrap text-lg leading-8">{data.content}</p>
+        <p className="whitespace-pre-wrap text-lg leading-8"></p>
       </div>
 
       <Separator className="my-8" />
 
       {/* Footer */}
-      <footer className="space-y-6">
+      {/* <footer className="space-y-6">
         {data.tags && data.tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {data.tags.map((tag: string) => (
@@ -64,7 +59,7 @@ export default async function BlogPage({params}:{params:Promise<{id:string}>}) {
             </Badge>
           )}
         </div>
-      </footer>
+      </footer> */}
     </article>
   );
 }

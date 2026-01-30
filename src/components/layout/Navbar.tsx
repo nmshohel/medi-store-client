@@ -66,11 +66,11 @@ const Navbar = ({
   menu = [
     { title: "Home", url: "/" },
     {
-      title: "Blogs",
+      title: "All Medicine",
       url: "/blogs",
     },
     {
-      title: "About",
+      title: "About Us",
       url: "/about",
     },
         {
