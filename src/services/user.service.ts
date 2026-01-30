@@ -31,5 +31,30 @@ export const userServices={
             }
 
         }
-    }
+    },
+    mySession:async function(){
+        try{
+              const cookieStore=await cookies()
+                const res = await fetch(`${AUTH_URL}/get-session`, {
+                cache: "no-store",
+                credentials: "include",
+            });
+
+                const data = await res.json();
+
+                if (!data.session) {
+                    return { data: null, error: "No session" };
+                }
+
+                 return { data: data.session, error: null }; 
+
+        }
+        catch(err){
+            console.error(err)
+            return {
+                data:null,error:{message:"something went wrong"}
+            }
+
+        }
+    },
 }

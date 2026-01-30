@@ -1,5 +1,5 @@
-"use client";
 
+"use client"
 import {  Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -24,6 +24,9 @@ import {
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import { ModeToggle } from "./ModeToggle";
+import { SearchBox } from "../ui/searchbox";
+import { userServices } from "@/services/user.service";
+
 
 interface MenuItem {
   title: string;
@@ -67,7 +70,7 @@ const Navbar = ({
     { title: "Home", url: "/" },
     {
       title: "All Medicine",
-      url: "/blogs",
+      url: "/all-medicine",
     },
     {
       title: "About Us",
@@ -84,6 +87,33 @@ const Navbar = ({
   },
   className,
 }: Navbar1Props) => {
+
+//     const [user, setUser] = useState<any>(null);
+//   const [loading, setLoading] = useState(true);
+
+
+
+// useEffect(() => {
+//   const loadSession = async () => {
+//     const result = await userServices.mySession();
+//     console.log(result)
+//     setUser(result.data);
+//     setLoading(false);
+//   };
+
+//   loadSession();
+// }, []);
+
+//   const handleLogout = async () => {
+//     await fetch("http://localhost:5000/api/auth/logout", {
+//       method: "POST",
+//       credentials: "include",
+//     });
+//     setUser(null);
+//   };
+
+
+
   return (
     <section className={cn("py-4", className)}>
       <div className="container mx-auto px-4">
@@ -109,6 +139,8 @@ const Navbar = ({
               </NavigationMenu>
             </div>
           </div>
+          <div><SearchBox/></div>
+
           <div className="flex gap-2">
             <ModeToggle/>
             <Button asChild variant="outline" size="sm">
@@ -159,6 +191,7 @@ const Navbar = ({
                   </Accordion>
 
                   <div className="flex flex-col gap-3">
+                    
                     <Button asChild variant="outline">
                       <Link href={auth.login.url}>{auth.login.title}</Link>
                     </Button>

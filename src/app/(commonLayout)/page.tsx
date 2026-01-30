@@ -15,7 +15,7 @@ import MedicineCard from "@/components/modules/homepage/MedicineCard"
 
 const images = [
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5",
-  "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5",
+  "https://i.ibb.co.com/Kj2pJ2Mm/c-2.png",
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5",
 ]
 
@@ -35,7 +35,7 @@ export default async function Home() {
                               src={src}
                               alt={`Medicine ${i + 1}`}
                               fill
-                              className="object-cover rounded-xl"
+                              className=" w-full object-cover rounded-xl"
                               priority={i === 0}
                             />
                           </CarouselItem>
@@ -56,7 +56,7 @@ export default async function Home() {
                   xl:grid-cols-5
                   max-w-8xl
                   mx-auto
-                  px-4
+                  px-15
                   gap-4
                 "> 
                 {data?.data?.map((medicine: any) => (
@@ -64,8 +64,8 @@ export default async function Home() {
                 ))}
               </div>
               {/* footer  */}
-              <div>
-
+              <div className="mx-15 my-5 bg-amber-50 min-h-50">
+                    <h1>This is footer</h1>
               </div>
             </div>
   )

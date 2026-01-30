@@ -1,13 +1,6 @@
-import { Badge } from "@/components/ui/badge";
+
 import { Separator } from "@/components/ui/separator";
-
-import { BlogPost } from "@/types";
-export async function generateStaticParams() {
-
-    
-}
-
-export default async function BlogPage({params}:{params:Promise<{id:string}>}) {
+export default async function MedicinePage({params}:{params:Promise<{id:string}>}) {
 
   return (
     <article className="container mx-auto px-4 py-12 max-w-2xl">
