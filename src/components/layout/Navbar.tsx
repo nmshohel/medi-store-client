@@ -39,7 +39,7 @@ interface Navbar1Props {
     url: string;
     src: string;
     alt: string;
-    title: string;
+  
     className?: string;
   };
   menu?: MenuItem[];
@@ -57,10 +57,11 @@ interface Navbar1Props {
 
 const Navbar = ({
   logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
+    url: "/",
+    src: "https://i.ibb.co.com/nq2Pvqj9/meditore-logo.jpg",
     alt: "logo",
-    title: "Shadcnblocks.com",
+  
+    
   },
   menu = [
     { title: "Home", url: "/" },
@@ -93,11 +94,11 @@ const Navbar = ({
             <a href={logo.url} className="flex items-center gap-2">
               <img
                 src={logo.src}
-                className="max-h-8 dark:invert"
+                className="max-h-20 object-contain"
                 alt={logo.alt}
               />
               <span className="text-lg font-semibold tracking-tighter">
-                {logo.title}
+            
               </span>
             </a>
             <div className="flex items-center">
