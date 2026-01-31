@@ -1,4 +1,3 @@
-
 "use client"
 import {  Menu } from "lucide-react";
 
@@ -25,7 +24,10 @@ import {
 import Link from "next/link";
 import { ModeToggle } from "./ModeToggle";
 import { SearchBox } from "../ui/searchbox";
+import { useEffect, useState } from "react";
 import { userServices } from "@/services/user.service";
+import { userSessionServices } from "@/services/user.session";
+
 
 
 interface MenuItem {
@@ -87,30 +89,25 @@ const Navbar = ({
   },
   className,
 }: Navbar1Props) => {
+  const [user, setUser] = useState<any>(null);
+const [loading, setLoading] = useState(true);
 
-//     const [user, setUser] = useState<any>(null);
-//   const [loading, setLoading] = useState(true);
+useEffect(() => {
+  const loadSession = async () => {
+    try {
+      const res = await userSessionServices.mySession();
+      console.log(res, "SESSION------------------------------------------------------");
 
+      setUser(res.data); // <-- IMPORTANT
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
-// useEffect(() => {
-//   const loadSession = async () => {
-//     const result = await userServices.mySession();
-//     console.log(result)
-//     setUser(result.data);
-//     setLoading(false);
-//   };
-
-//   loadSession();
-// }, []);
-
-//   const handleLogout = async () => {
-//     await fetch("http://localhost:5000/api/auth/logout", {
-//       method: "POST",
-//       credentials: "include",
-//     });
-//     setUser(null);
-//   };
+  loadSession();
+}, []);
 
 
 

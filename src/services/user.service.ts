@@ -35,10 +35,12 @@ export const userServices={
     mySession:async function(){
         try{
               const cookieStore=await cookies()
-                const res = await fetch(`${AUTH_URL}/get-session`, {
+                const res = await fetch(`${env.AUTH_URL}/get-session`, {
+                headers: {
+                    Cookie: cookieStore.toString(),
+                },
                 cache: "no-store",
-                credentials: "include",
-            });
+                });
 
                 const data = await res.json();
 
