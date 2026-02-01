@@ -1,5 +1,6 @@
 import { env } from "@/env";
 import { userServices } from "./user.service";
+import { cookies } from "next/headers";
 
 
 const API_URL = env.API_URL;
@@ -28,36 +29,36 @@ export const medicineService = {
       }
     }
   },
-  //   createMedicine: async function (medicineData) {
-  //   try {
+createMedicine: async (medicineData: any) => {
+    try {
+      const cookieStore = await cookies();
+      const session=await userServices.getSession()
+      const sellerId=session?.data?.user?.id
+      medicineData.sellerId=sellerId
+      console.log(JSON.stringify(medicineData))
+     
+      const res = await fetch("http://localhost:5000/api/medicines", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+        body: JSON.stringify(medicineData),
+      });
 
-  //         const session=await userServices.getSession();
-  //         if(!session)
-  //         {
-  //             throw new Error("User Session Not Found")
-  //         }
-  //         const sellerId=session?.data?.user?.id
+      const data = await res.json();
+       console.log("***********************",data)
 
-  //       const res = await fetch(`${API_URL}/medicines`, {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Cookie: cookieStore.toString(),
-  //           },
-  //           body: JSON.stringify(medicineData),
-  //         });
+      if (data.error) {
+        return {
+          data: null,
+          error: { message: "Error: Medicine not created." },
+        };
+      }
 
-  //         if (!res.ok) {
-  //           return { success: false, message: "Failed to create medicine" };
-  //         }
-
-  // return { success: true };
-  //   } catch (err) {
-  //     console.error("medicineService error:", err)
-  //     return {
-  //       data: null,
-  //       error: { message: "Something went wrong" },
-  //     }
-  //   }
-  // },
+      return { data: data, error: null };
+    } catch (err) {
+      return { data: null, error: { message: "Something Went Wrong" } };
+    }
+  },
 }

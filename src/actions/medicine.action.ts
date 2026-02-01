@@ -7,3 +7,8 @@ import { medicineService } from "@/services/medicine.service";
 export const getMedicine = async () => {
   return await medicineService.getMedicines()
 };
+export const createMedicine = async (data: any) => {
+  const res = await medicineService.createMedicine(data);
+  // updateTag("blogPosts");
+  return res;
+};

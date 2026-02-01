@@ -8,7 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { getMedicine } from "@/actions/blog.action"
+import { getMedicine } from "@/actions/medicine.action"
 import { medicineService } from "@/services/medicine.service"
 import MedicineCard from "@/components/modules/homepage/MedicineCard"
 

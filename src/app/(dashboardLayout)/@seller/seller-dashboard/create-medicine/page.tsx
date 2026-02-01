@@ -1,4 +1,6 @@
-import CreateMedicineFromServer from "@/components/modules/seller/CreateMedicineFromServer";
+import CreateMedicine from "@/components/modules/seller/CreateMedicine";
+
+
 
 
 export default function CreateMedinine() {
@@ -6,7 +8,7 @@ export default function CreateMedinine() {
     <div>
 
         <div>
-                <CreateMedicineFromServer/>
+                <CreateMedicine/>
         </div>
 
 
