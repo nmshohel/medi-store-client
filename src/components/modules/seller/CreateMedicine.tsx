@@ -53,10 +53,6 @@ export default function CreateMedicine() {
 
         const data = res?.data;
         setCategories(data);
-        // if (Array.isArray(res)) {
-        //   console.log("r", res);
-        //   setCategories(res);
-        // }
       } catch (error) {
         toast.error("Failed to load categories");
       }
@@ -64,7 +60,7 @@ export default function CreateMedicine() {
 
     fetchCategories();
   }, []);
-  console.log("********************* categories", categories);
+
   const form = useForm({
     defaultValues: {
       name: "",
@@ -94,8 +90,6 @@ export default function CreateMedicine() {
       try {
         const res = await createMedicine(medicineData);
 
-        console.log("-------------------------", res);
-
         if (res.error) {
           toast.error(res.error.message, { id: toastId });
           return;
@@ -111,10 +105,10 @@ export default function CreateMedicine() {
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>
+        <CardTitle>Add a Medicine</CardTitle>
+        {/* <CardDescription>
           Enter your information below to create your account
-        </CardDescription>
+        </CardDescription> */}
       </CardHeader>
       <CardContent>
         <form
