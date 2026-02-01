@@ -1,4 +1,6 @@
 "use client";
+
+import { getCategoriess } from "@/actions/category.action";
 import { createMedicine } from "@/actions/medicine.action";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,24 +18,53 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "@tanstack/react-form";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { number, z } from "zod";
 
-// const medicineSchema = z.object({
-//   title: z
-//     .string()
-//     .min(3, "Title must be at least 3 characters")
-//     .max(200, "Title must be less than 200 characters"),
-//   content: z
-//     .string()
-//     .min(10, "Content must be at least 10 characters")
-//     .max(5000, "Content must be less than 5000 characters"),
-//   tags: z.string(),
-// });
+const medicineSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().min(10, "Description is required"),
+  price: z.number().min(0, "Price must be positive"),
+  stock: z.number().int().min(0, "Stock must be a non-negative integer"),
+  categoryId: z.string().min(1, "Category is required"),
+  manufacturer: z.string().min(1, "Manufacturer is required"),
+  image: z.string().min(1, "Image is required"),
+});
 
 export default function CreateMedicine() {
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
+    [],
+  );
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await getCategoriess();
+
+        const data = res?.data;
+        setCategories(data);
+        // if (Array.isArray(res)) {
+        //   console.log("r", res);
+        //   setCategories(res);
+        // }
+      } catch (error) {
+        toast.error("Failed to load categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+  console.log("********************* categories", categories);
   const form = useForm({
     defaultValues: {
       name: "",
@@ -44,9 +75,9 @@ export default function CreateMedicine() {
       manufacturer: "",
       image: "",
     },
-    // validators: {
-    //   onSubmit: blogSchema,
-    // },
+    validators: {
+      onSubmit: medicineSchema,
+    },
     onSubmit: async ({ value }) => {
       const toastId = toast.loading("Creating....");
 
@@ -60,14 +91,10 @@ export default function CreateMedicine() {
         image: value.image,
       };
 
-     
-
-     
-
       try {
         const res = await createMedicine(medicineData);
 
-         console.log("-------------------------",res)
+        console.log("-------------------------", res);
 
         if (res.error) {
           toast.error(res.error.message, { id: toastId });
@@ -143,7 +170,7 @@ export default function CreateMedicine() {
                 );
               }}
             />
-          <form.Field
+            <form.Field
               name="price"
               children={(field) => (
                 <Field data-invalid={field.state.meta.errors.length > 0}>
@@ -159,7 +186,7 @@ export default function CreateMedicine() {
                 </Field>
               )}
             />
-          <form.Field
+            <form.Field
               name="stock"
               children={(field) => (
                 <Field data-invalid={field.state.meta.errors.length > 0}>
@@ -178,20 +205,27 @@ export default function CreateMedicine() {
               name="categoryId"
               children={(field) => {
                 const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+                  field.state.meta.isTouched &&
+                  field.state.meta.errors.length > 0;
+
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>
-                      categoryId
-                    </FieldLabel>
-                    <Input
-                      type="text"
-                      id={field.name}
-                      name={field.name}
+                    <FieldLabel htmlFor={field.name}>Category</FieldLabel>
+                    <Select
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="categoryId"
-                    />
+                      onValueChange={(value) => field.handleChange(value)}
+                    >
+                      <SelectTrigger id={field.name} className="w-full">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
@@ -199,16 +233,14 @@ export default function CreateMedicine() {
                 );
               }}
             />
-                        <form.Field
+            <form.Field
               name="manufacturer"
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>
-                      manufacturer
-                    </FieldLabel>
+                    <FieldLabel htmlFor={field.name}>manufacturer</FieldLabel>
                     <Input
                       type="text"
                       id={field.name}
@@ -224,16 +256,14 @@ export default function CreateMedicine() {
                 );
               }}
             />
-                        <form.Field
+            <form.Field
               name="image"
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>
-                      image Link
-                    </FieldLabel>
+                    <FieldLabel htmlFor={field.name}>image Link</FieldLabel>
                     <Input
                       type="text"
                       id={field.name}
