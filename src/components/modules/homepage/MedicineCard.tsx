@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, MessageCircle } from "lucide-react";
+import { ShoppingCart, Eye } from "lucide-react";
 
 import {
   Card,
@@ -10,16 +12,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Medicine } from "@/types";
 
-
-export default function MedicineCard({  medicine }: { medicine: Medicine }) {
-  console.log(medicine)
-   
+export default function MedicineCard({ medicine }: { medicine: Medicine }) {
   return (
-    <Card className="h-full overflow-hidden border-none shadow-md transition-all duration-300 pb-2">
-      <div className="relative h-30 w-full overflow-hidden">
-        {medicine.name ? (
+    <Card className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-sm transition-all duration-300 hover:shadow-lg">
+      {/* Image */}
+      <div className="relative h-40 w-full overflow-hidden bg-muted">
+        {medicine.image ? (
           <Image
             src={medicine.image}
             alt={medicine.name}
@@ -27,61 +28,44 @@ export default function MedicineCard({  medicine }: { medicine: Medicine }) {
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
+          <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
             No Image
           </div>
         )}
+
+        {/* Stock badge */}
+        <Badge
+          className="absolute left-3 top-3"
+          variant={medicine.stock > 0 ? "default" : "destructive"}
+        >
+          {medicine.stock > 0 ? `In Stock: ${medicine.stock}` : "Out of Stock"}
+        </Badge>
       </div>
 
-      <CardHeader className="pb-2">
-        <CardTitle className="line-clamp-2 text-xl font-bold transition-colors group-hover:text-primary">
+      {/* Content */}
+      <CardHeader className="pb-0">
+        <CardTitle className="line-clamp-2 text-lg font-semibold">
           {medicine.name}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="mb-2 line-clamp-3 text-sm text-muted-foreground">
-          {medicine.description}
-        </p>
 
-        {/* {medicine.tags && medicine.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {medicine.tags.slice(0, 3).map((tag:any, index:any) => (
-              <Badge key={index} variant="secondary" className="text-xs">
-                #{tag}
-              </Badge>
-            ))}
-          </div>
-        )} */}
+      <CardContent className="mt-auto text-xl font-bold text-primary">
+        {/* Price */}৳ {medicine.price}
       </CardContent>
 
-      <CardFooter className="flex items-center justify-between border-t p-1">
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Eye className="h-4 w-4" />
-            Available: {medicine.stock}
-          </span>
+      {/* Actions */}
+      <CardFooter className="flex gap-2 border-t px-4">
+        <Button className="flex-1" disabled={medicine.stock === 0}>
+          <ShoppingCart className="mr-2 h-2 w-2" />
+          Add to Cart
+        </Button>
 
-          <span className="flex items-center gap-1">
-            <MessageCircle className="h-4 w-4" />
-            {/* {medicine._count?.comments || 0} */}
-          </span>
-
-          {/* {medicine.isFeatured && (
-            <Badge
-              variant="default"
-              className="bg-yellow-500 hover:bg-yellow-600"
-            >
-              Featured
-            </Badge>
-          )} */}
-        </div>
-
-        <Link
-          href=""
-          className="text-sm font-semibold text-primary group-hover:underline"
-        >
-          Read More &rarr;
-        </Link>
+        <Button variant="outline" asChild>
+          <Link href={`/medicines/${medicine.id}`}>
+            <Eye className="mr-2 h-2 w-2" />
+            Details
+          </Link>
+        </Button>
       </CardFooter>
     </Card>
   );
