@@ -12,3 +12,8 @@ export const createMedicine = async (data: any) => {
   // updateTag("blogPosts");
   return res;
 };
+
+export const deleteMedicine = async (id: string) => {
+  const res = await medicineService.deleteMedicine(id);
+  return res;
+};

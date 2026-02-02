@@ -1,3 +1,4 @@
+
 import { env } from "@/env";
 import { userServices } from "./user.service";
 import { cookies } from "next/headers";
@@ -53,6 +54,31 @@ createMedicine: async (medicineData: any) => {
         return {
           data: null,
           error: { message: "Error: Medicine not created." },
+        };
+      }
+
+      return { data: data, error: null };
+    } catch (err) {
+      return { data: null, error: { message: "Something Went Wrong" } };
+    }
+  },
+  deleteMedicine: async (medicineId: string) => {
+    try {
+      const cookieStore = await cookies();
+     
+      const res = await fetch(`http://localhost:5000/api/medicines/${medicineId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        return {
+          data: null,
+          error: { message: "Error: Medicine not Deleted." },
         };
       }
 
