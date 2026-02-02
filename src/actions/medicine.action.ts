@@ -1,6 +1,7 @@
 "use server";
 
 import { medicineService } from "@/services/medicine.service";
+import { Medicine } from "@/types";
 
 
 
@@ -15,5 +16,13 @@ export const createMedicine = async (data: any) => {
 
 export const deleteMedicine = async (id: string) => {
   const res = await medicineService.deleteMedicine(id);
+  return res;
+};
+export const getSingleMedicine = async (id: string) => {
+  const res = await medicineService.getSingleMedicine(id);
+  return res;
+};
+export const updateMedicine = async (medicineData:Partial<Medicine>,id: string) => {
+  const res = await medicineService.updateMedicine(medicineData,id);
   return res;
 };
