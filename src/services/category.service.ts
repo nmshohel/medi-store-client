@@ -14,7 +14,7 @@ export const categoryServices={
 
       const data = await res.json()
 
-      console.log("----------------service-----------",data)
+  
 
    
 

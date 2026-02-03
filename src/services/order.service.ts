@@ -8,35 +8,41 @@ import { Medicine } from "@/types";
 const API_URL = env.API_URL;
 
 
-export const medicineService = {
-  getMedicines: async function () {
-    try {
-      const res = await fetch("http://localhost:5000/api/medicines", {
-      })
+export const orderService = {
+getOrders: async function () {
+  try {
+    const res = await fetch("http://localhost:5000/api/orders");
+    
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch medicines")
-      }
-
-      const data = await res.json()
-   
-
-      return { data, error: null }
-    } catch (err) {
-      console.error("medicineService error:", err)
-      return {
-        data: null,
-        error: { message: "Something went wrong" },
-      }
+    // 1. Check if the HTTP status is 200-299
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({})); // Try to get server error msg
+      return { 
+        data: null, 
+        error: { message: errorData.message || `Error: ${res.status}` } 
+      };
     }
-  },
+
+    const data = await res.json();
+    return { data, error: null };
+
+  } catch (err) {
+    // This catches network failures or JSON parsing errors
+    console.error("Order Service network error:", err);
+    return {
+      data: null,
+      error: { message: "Network error or server is unreachable" },
+    };
+  }
+},
+
 createMedicine: async (medicineData: any) => {
     try {
       const cookieStore = await cookies();
       const session=await userServices.getSession()
       const sellerId=session?.data?.user?.id
       medicineData.sellerId=sellerId
-    
+ 
      
       const res = await fetch("http://localhost:5000/api/medicines", {
         method: "POST",
@@ -48,7 +54,7 @@ createMedicine: async (medicineData: any) => {
       });
 
       const data = await res.json();
-     
+ 
 
       if (data.error) {
         return {
@@ -112,18 +118,19 @@ createMedicine: async (medicineData: any) => {
       return { data: null, error: { message: "Something Went Wrong" } };
     }
   },
-  updateMedicine: async (medicineData: Partial<Medicine>,id:string) => {
+  updateOrder: async (orderData: any,id:string) => {
     try {
       const cookieStore = await cookies();
 
      
-      const res = await fetch(`http://localhost:5000/api/medicines/${id}`, {
-        method: "PUT",
+     
+      const res = await fetch(`http://localhost:5000/api/orders/${id}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Cookie: cookieStore.toString(),
         },
-        body: JSON.stringify(medicineData),
+        body: JSON.stringify(orderData),
       });
 
       const data = await res.json();
@@ -132,7 +139,7 @@ createMedicine: async (medicineData: any) => {
       if (data.error) {
         return {
           data: null,
-          error: { message: "Error: Medicine not Updated." },
+          error: { message: "Error: Order not Updated." },
         };
       }
 

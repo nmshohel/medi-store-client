@@ -1,12 +1,9 @@
-"use client"
-import {  Menu } from "lucide-react";
+"use client";
+import { Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import {
-  Accordion,
-
-} from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -27,8 +24,7 @@ import { SearchBox } from "../ui/searchbox";
 import { useEffect, useState } from "react";
 import { userServices } from "@/services/user.service";
 import { userSessionServices } from "@/services/user.session";
-
-
+import { getSession } from "@/actions/user.action";
 
 interface MenuItem {
   title: string;
@@ -44,7 +40,7 @@ interface Navbar1Props {
     url: string;
     src: string;
     alt: string;
-  
+
     className?: string;
   };
   menu?: MenuItem[];
@@ -65,8 +61,6 @@ const Navbar = ({
     url: "/",
     src: "https://i.ibb.co.com/nq2Pvqj9/meditore-logo.jpg",
     alt: "logo",
-  
-    
   },
   menu = [
     { title: "Home", url: "/" },
@@ -78,7 +72,7 @@ const Navbar = ({
       title: "About Us",
       url: "/about",
     },
-        {
+    {
       title: "Dashboard",
       url: "/dashboard",
     },
@@ -90,26 +84,22 @@ const Navbar = ({
   className,
 }: Navbar1Props) => {
   const [user, setUser] = useState<any>(null);
-const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const loadSession = async () => {
-    try {
-      const res = await userSessionServices.mySession();
-      console.log(res, "SESSION------------------------------------------------------");
+  useEffect(() => {
+    const loadSession = async () => {
+      try {
+        const res = await getSession();
+        setUser(res.data); // <-- IMPORTANT
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setUser(res.data); // <-- IMPORTANT
-    } catch {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  loadSession();
-}, []);
-
-
+    loadSession();
+  }, []);
 
   return (
     <section className={cn("py-4", className)}>
@@ -124,9 +114,7 @@ useEffect(() => {
                 className="max-h-20 object-contain"
                 alt={logo.alt}
               />
-              <span className="text-lg font-semibold tracking-tighter">
-            
-              </span>
+              <span className="text-lg font-semibold tracking-tighter"></span>
             </a>
             <div className="flex items-center">
               <NavigationMenu>
@@ -136,10 +124,12 @@ useEffect(() => {
               </NavigationMenu>
             </div>
           </div>
-          <div><SearchBox/></div>
+          <div>
+            <SearchBox />
+          </div>
 
           <div className="flex gap-2">
-            <ModeToggle/>
+            <ModeToggle />
             <Button asChild variant="outline" size="sm">
               <Link href={auth.login.url}>{auth.login.title}</Link>
             </Button>
@@ -188,7 +178,6 @@ useEffect(() => {
                   </Accordion>
 
                   <div className="flex flex-col gap-3">
-                    
                     <Button asChild variant="outline">
                       <Link href={auth.login.url}>{auth.login.title}</Link>
                     </Button>
@@ -207,21 +196,19 @@ useEffect(() => {
 };
 
 const renderMenuItem = (item: MenuItem) => {
-
   return (
     <NavigationMenuItem key={item.title}>
-      <NavigationMenuLink asChild
+      <NavigationMenuLink
+        asChild
         className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
       >
-        <Link href={item.url}>{item.title}</Link> 
+        <Link href={item.url}>{item.title}</Link>
       </NavigationMenuLink>
     </NavigationMenuItem>
   );
 };
 
 const renderMobileMenuItem = (item: MenuItem) => {
-
-
   return (
     <Link key={item.title} href={item.url} className="text-md font-semibold">
       {item.title}

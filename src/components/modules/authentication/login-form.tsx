@@ -1,5 +1,5 @@
-"use client"
-import { Button } from "@/components/ui/button"
+"use client";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,64 +7,63 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { authClient } from "@/lib/auth-client"
+} from "@/components/ui/card";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
-import {useForm} from "@tanstack/react-form"
-import z from "zod"
+import { useForm } from "@tanstack/react-form";
+import z from "zod";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
-
 
 const formSchema = z.object({
   password: z.string().min(8, "Minimum length is 8"),
   email: z.email(),
 });
 export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
-    const seachParams = useSearchParams();
+  const seachParams = useSearchParams();
   const redirect = seachParams.get("redirectPath");
   const router = useRouter();
-  const form=useForm({
-    defaultValues:{
-   
-      email:"",
-      password:""
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
     },
-      validators: {
+    validators: {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-
       try {
         const { data, error } = await authClient.signIn.email(value);
-        console.log(data)
 
         if (data) {
-        toast.success("User Logged in Successfully");
-        if (redirect) {
-          router.push(redirect);
+          toast.success("User Logged in Successfully");
+          if (redirect) {
+            router.push(redirect);
+          } else {
+            router.push("/");
+          }
         } else {
-          router.push("/");
+          toast.error(error.message);
         }
-      } else {
-        toast.error(error.message);
-      }
 
         // if (error) {
         //   toast.error(error.message, { id: toastId });
         //   return;
         // }
-        
+
         // toast.success("User Logged in Successfully", { id: toastId });
-
-
       } catch (err) {
         toast.error("Something went wrong, please try again.");
       }
     },
-  })
+  });
   return (
     <Card {...props}>
       <CardHeader>
@@ -74,58 +73,66 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form id="register-form" onSubmit={(e)=>{
-          e.preventDefault();
-          form.handleSubmit();
-        }}>
-
+        <form
+          id="register-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+        >
           <FieldGroup>
-                <form.Field name="email" children={(field)=>{
-                  const isInvalid =
+            <form.Field
+              name="email"
+              children={(field) => {
+                const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
-                return(
+                return (
                   <Field>
-                          <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                          <Input
-                          type="email"
-                          id={field.name}
-                          name={field.name}
-                          value={field.state.value}
-                          onChange={(e)=>field.handleChange(e.target.value)}
-                          />
-                   {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                )
-              }}/>
-                <form.Field name="password" children={(field)=>{
-                  const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return(
-                  <Field>
-                          <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                          <Input
-                          type="password"
-                          id={field.name}
-                          name={field.name}
-                          value={field.state.value}
-                          onChange={(e)=>field.handleChange(e.target.value)}
-                          />
+                    <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                    <Input
+                      type="email"
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
                   </Field>
-                )
-              }}/>
+                );
+              }}
+            />
+            <form.Field
+              name="password"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field>
+                    <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                    <Input
+                      type="password"
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+            />
           </FieldGroup>
-            
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-5 justify-end">
-                  <Button  form="register-form" type="submit" className="w-full">Login</Button>
-
+        <Button form="register-form" type="submit" className="w-full">
+          Login
+        </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

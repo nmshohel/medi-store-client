@@ -116,9 +116,6 @@ export default function MyCard({ medicine, open, setOpen }: MyCardProps) {
             <Button
               className="w-full h-11 text-base font-semibold"
               onClick={() => {
-                console.log(
-                  `Added ${quantity} of ${medicine.name} to cart. Total: ৳${totalPrice}`,
-                );
                 setOpen(false);
               }}
             >
