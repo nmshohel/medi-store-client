@@ -1,11 +1,11 @@
-import MedicineCard from "@/components/modules/homepage/MedicineCard"
-import { medicineService } from "@/services/medicine.service"
-
+import { getMedicine } from "@/actions/medicine.action";
+import MedicineCard from "@/components/modules/homepage/MedicineCard";
 
 export default async function AllMedicine() {
-  const {data} = await medicineService.getMedicines()
+  const { data } = await getMedicine();
   return (
-                  <div className="
+    <div
+      className="
                       grid
                       grid-cols-1
                       sm:grid-cols-2
@@ -16,10 +16,11 @@ export default async function AllMedicine() {
                       mx-auto
                       px-15
                       gap-4
-                    "> 
-                    {data?.data?.map((medicine: any) => (
-                        <MedicineCard key={medicine.id} medicine={medicine}/>
-                    ))}
-                  </div>
-  )
+                    "
+    >
+      {data?.data?.map((medicine: any) => (
+        <MedicineCard key={medicine.id} medicine={medicine} />
+      ))}
+    </div>
+  );
 }

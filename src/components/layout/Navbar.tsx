@@ -22,10 +22,9 @@ import Link from "next/link";
 import { ModeToggle } from "./ModeToggle";
 import { SearchBox } from "../ui/searchbox";
 import { useEffect, useState } from "react";
-import { userServices } from "@/services/user.service";
-import { userSessionServices } from "@/services/user.session";
-import { getSession } from "@/actions/user.action";
 
+import { getSession } from "@/actions/user.action";
+import { ShoppingCart } from "lucide-react";
 interface MenuItem {
   title: string;
   url: string;
@@ -129,6 +128,11 @@ const Navbar = ({
           </div>
 
           <div className="flex gap-2">
+            <div>
+              <Button variant="outline" size="icon">
+                <ShoppingCart className="h-5 w-5" />
+              </Button>
+            </div>
             <ModeToggle />
             <Button asChild variant="outline" size="sm">
               <Link href={auth.login.url}>{auth.login.title}</Link>
@@ -176,8 +180,15 @@ const Navbar = ({
                   >
                     {menu.map((item) => renderMobileMenuItem(item))}
                   </Accordion>
-
+                  <div>
+                    <SearchBox />
+                  </div>
                   <div className="flex flex-col gap-3">
+                    <div>
+                      <Button variant="outline" size="icon">
+                        <ShoppingCart className="h-5 w-5" />
+                      </Button>
+                    </div>
                     <Button asChild variant="outline">
                       <Link href={auth.login.url}>{auth.login.title}</Link>
                     </Button>

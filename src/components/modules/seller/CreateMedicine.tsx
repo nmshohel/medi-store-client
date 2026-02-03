@@ -106,9 +106,6 @@ export default function CreateMedicine() {
     <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Add a Medicine</CardTitle>
-        {/* <CardDescription>
-          Enter your information below to create your account
-        </CardDescription> */}
       </CardHeader>
       <CardContent>
         <form
