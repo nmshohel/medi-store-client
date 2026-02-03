@@ -25,6 +25,8 @@ import { useEffect, useState } from "react";
 
 import { getSession } from "@/actions/user.action";
 import { ShoppingCart } from "lucide-react";
+import { Medicine } from "@/types";
+import MyCard from "../modules/homepage/MyCard";
 interface MenuItem {
   title: string;
   url: string;
@@ -82,6 +84,11 @@ const Navbar = ({
   },
   className,
 }: Navbar1Props) => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(
+    null,
+  );
+
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -129,7 +136,7 @@ const Navbar = ({
 
           <div className="flex gap-2">
             <div>
-              <Button variant="outline" size="icon">
+              <Button className="flex-1" variant="outline" size="icon">
                 <ShoppingCart className="h-5 w-5" />
               </Button>
             </div>
