@@ -69,18 +69,17 @@ export default function MedicineCard({ medicine }: { medicine: Medicine }) {
         </CardContent>
 
         {/* Actions */}
-        <CardFooter className="flex gap-2 border-t px-4">
+        <CardFooter className="flex gap-1 border-t px-4">
           <Button
             className="flex-1"
             disabled={medicine.stock === 0}
             onClick={handleAddToCart}
           >
-            <ShoppingCart className="mr-2 h-2 w-2" />
             Add to Cart
           </Button>
 
           <Button variant="outline" asChild>
-            <Link href={`/medicines/${medicine.id}`}>
+            <Link href={`/all-medicine/${medicine.id}`}>
               <Eye className="mr-2 h-2 w-2" />
               Details
             </Link>

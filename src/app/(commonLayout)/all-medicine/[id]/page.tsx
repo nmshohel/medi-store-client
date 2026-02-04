@@ -1,58 +1,61 @@
+import { getSingleMedicine } from "@/actions/medicine.action";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 
-import { Separator } from "@/components/ui/separator";
-export default async function MedicinePage({params}:{params:Promise<{id:string}>}) {
+export default async function MedicinePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const medicinedata = (await getSingleMedicine(id)) || {};
+  const medicine = medicinedata.data;
 
   return (
-    <article className="container mx-auto px-4 py-12 max-w-2xl">
-      {/* Header */}
-      <header className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-4">
-   
-        </h1>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <Card>
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* IMAGE */}
+            <div className="relative w-full h-96">
+              <Image
+                src={medicine.image}
+                alt={medicine.name}
+                fill
+                className="object-contain rounded-lg"
+                priority
+              />
+            </div>
 
-        <div className="flex items-center gap-3 text-muted-foreground text-sm">
-          <span></span>
-          <span>·</span>
-          <span> min read</span>
-          <span>·</span>
-          <span> views</span>
-        </div>
-      </header>
+            {/* DETAILS */}
+            <div className="space-y-4">
+              <h1 className="text-3xl font-bold">{medicine.name}</h1>
 
-      <Separator className="mb-8" />
+              <p className="text-muted-foreground">{medicine.description}</p>
 
-      {/* Content */}
-      <div className="prose prose-lg dark:prose-invert max-w-none leading-relaxed text-foreground">
-        <p className="whitespace-pre-wrap text-lg leading-8"></p>
-      </div>
+              <div className="space-y-1 text-sm">
+                <p>
+                  <span className="font-medium">Manufacturer:</span>{" "}
+                  {medicine.manufacturer}
+                </p>
+                <p>
+                  <span className="font-medium">Stock:</span> {medicine.stock}{" "}
+                  available
+                </p>
+              </div>
 
-      <Separator className="my-8" />
+              <div className="text-2xl font-semibold text-primary">
+                ৳{medicine.price}
+              </div>
 
-      {/* Footer */}
-      {/* <footer className="space-y-6">
-        {data.tags && data.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {data.tags.map((tag: string) => (
-              <Badge
-                key={tag}
-                variant="secondary"
-                className="px-3 py-1 text-sm font-normal rounded-full"
-              >
-                {tag}
-              </Badge>
-            ))}
+              <Button size="lg" className="mt-4">
+                Add to Cart
+              </Button>
+            </div>
           </div>
-        )}
-
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>{data._count?.comments ?? 0} comments</span>
-          {data.isFeatured && (
-            <Badge variant="outline" className="rounded-full">
-              Featured
-            </Badge>
-          )}
-        </div>
-      </footer> */}
-    </article>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

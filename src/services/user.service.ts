@@ -62,7 +62,11 @@ export const userServices={
     },
     getUsers: async function () {
         try {
-            const res = await fetch("http://localhost:5000/api/users");
+            const res = await fetch("http://localhost:5000/api/users",{
+                next:{
+                    tags:["getUsers"]
+                }
+            });
         
             
             // 1. Check if the HTTP status is 200-299
@@ -105,6 +109,31 @@ updateUser: async (userData: any,id:string) => {
         return {
           data: null,
           error: { message: "Error: User not Updated." },
+        };
+      }
+
+      return { data: data, error: null };
+    } catch (err) {
+      return { data: null, error: { message: "Something Went Wrong" } };
+    }
+  },
+    getSingleUser: async (userId: string) => {
+    try {
+      const cookieStore = await cookies();
+     
+      const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        return {
+          data: null,
+          error: { message: "Error: User not Fetched." },
         };
       }
 

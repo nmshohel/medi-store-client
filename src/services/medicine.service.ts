@@ -12,6 +12,9 @@ export const medicineService = {
   getMedicines: async function () {
     try {
       const res = await fetch("http://localhost:5000/api/medicines", {
+        next:{
+          tags:["getMedicine"]
+        }
       })
 
       if (!res.ok) {

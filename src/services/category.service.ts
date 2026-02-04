@@ -10,7 +10,9 @@ export const categoryServices={
   getCategories: async function () {
     try {
       const res = await fetch("http://localhost:5000/api/categoris", {
-        cache: "no-store", // IMPORTANT for Next.js
+        next:{
+          tags:["getCategories"]
+        }
       })
 
       const data = await res.json()
@@ -120,6 +122,7 @@ export const categoryServices={
             Cookie: cookieStore.toString(),
           },
           body: JSON.stringify(categoryData),
+          
         });
         const data = await res.json();
         if (data.error) {

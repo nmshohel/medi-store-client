@@ -9,6 +9,10 @@ export const customerRoutes:Route[]=[
           title: "My Order",
           url: "",
         },
+        {
+          title: "Profile",
+          url: "/dashboard/profile",
+        },
 
       ],
     },

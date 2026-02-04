@@ -2,6 +2,7 @@
 
 import { medicineService } from "@/services/medicine.service";
 import { Medicine } from "@/types";
+import { revalidateTag } from "next/cache";
 
 
 
@@ -10,6 +11,7 @@ export const getMedicine = async () => {
 };
 export const createMedicine = async (data: any) => {
   const res = await medicineService.createMedicine(data);
+  revalidateTag("getMedicine", "max");
   // updateTag("blogPosts");
   return res;
 };
