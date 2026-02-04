@@ -96,6 +96,7 @@ export default function CreateMedicine() {
         }
 
         toast.success("Medicine Created", { id: toastId });
+        form.reset();
       } catch (err) {
         toast.error("Something Went Wrong", { id: toastId });
       }

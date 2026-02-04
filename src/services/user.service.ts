@@ -60,4 +60,59 @@ export const userServices={
 
         }
     },
+    getUsers: async function () {
+        try {
+            const res = await fetch("http://localhost:5000/api/users");
+        
+            
+            // 1. Check if the HTTP status is 200-299
+            if (!res.ok) {
+            const errorData = await res.json().catch(() => ({})); // Try to get server error msg
+            return { 
+                data: null, 
+                error: { message: errorData.message || `Error: ${res.status}` } 
+            };
+            }
+
+            const data = await res.json();
+            return { data, error: null };
+
+        } catch (err) {
+            // This catches network failures or JSON parsing errors
+            console.error("User Service network error:", err);
+            return {
+            data: null,
+            error: { message: "Network error or server is unreachable" },
+            };
+        }
+        },
+updateUser: async (userData: any,id:string) => {
+    try {
+      const cookieStore = await cookies();
+      const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await res.json();
+     
+
+      if (data.error) {
+        return {
+          data: null,
+          error: { message: "Error: User not Updated." },
+        };
+      }
+
+      return { data: data, error: null };
+    } catch (err) {
+      return { data: null, error: { message: "Something Went Wrong" } };
+    }
+  },
+
+
 }
