@@ -27,3 +27,8 @@ export const updateOrder = async (orderData:any,id: string) => {
   const res = await orderService.updateOrder(orderData,id);
   return res;
 };
+
+export const createOrder = async (data: any) => {
+  const res = await orderService.createOrder(data);
+  return res;
+};

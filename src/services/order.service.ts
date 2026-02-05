@@ -148,4 +148,31 @@ createMedicine: async (medicineData: any) => {
       return { data: null, error: { message: "Something Went Wrong" } };
     }
   },
+  createOrder: async (orderData: any) => {
+    try {
+      const cookieStore = await cookies();
+      const res = await fetch("http://localhost:5000/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const data = await res.json();
+ 
+
+      if (data.error) {
+        return {
+          data: null,
+          error: { message: "Error: Order failed." },
+        };
+      }
+
+      return { data: data, error: null };
+    } catch (err) {
+      return { data: null, error: { message: "Something Went Wrong" } };
+    }
+  },
 }

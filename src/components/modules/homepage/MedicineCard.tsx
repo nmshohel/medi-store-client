@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Eye } from "lucide-react";
-
+import { Eye, ShoppingCart } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -15,89 +13,113 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Medicine } from "@/types";
-import MyCard from "./MyCard";
+import { toast } from "sonner";
 
-export default function MedicineCard({ medicine }: { medicine: Medicine }) {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(
-    null,
-  );
+interface MedicineCardProps {
+  medicine: Medicine;
+}
 
+export default function MedicineCard({ medicine }: MedicineCardProps) {
   const handleAddToCart = () => {
-    setSelectedMedicine(medicine); // set clicked medicine
-    setIsDrawerOpen(true); // open the drawer
+    // 1. Get current cart from localStorage
+    const saved = localStorage.getItem("pending_cart_items");
+    let currentCart: any[] = saved ? JSON.parse(saved) : [];
+
+    // 2. Check if this medicine is already in the cart
+    const existingItemIndex = currentCart.findIndex(
+      (item) => item.id === medicine.id,
+    );
+
+    if (existingItemIndex > -1) {
+      // If it exists, check stock before incrementing
+      if (currentCart[existingItemIndex].quantity < medicine.stock) {
+        currentCart[existingItemIndex].quantity += 1;
+        toast.success(`Updated quantity for ${medicine.name}`);
+      } else {
+        toast.error("Cannot add more than available stock");
+        return;
+      }
+    } else {
+      // If it's new, add it with quantity 1
+      const newItem = {
+        ...medicine,
+        quantity: 1,
+      };
+      currentCart.push(newItem);
+      toast.success(`${medicine.name} added to cart`);
+    }
+
+    // 3. Save back to localStorage
+    localStorage.setItem("pending_cart_items", JSON.stringify(currentCart));
+
+    // 4. Trigger the custom event so the Navbar updates instantly
+    window.dispatchEvent(new Event("cart-updated"));
   };
 
   return (
-    <>
-      <Card className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-sm transition-all duration-300 hover:shadow-lg">
-        {/* Image */}
-        <div className="relative h-40 w-full overflow-hidden bg-muted">
-          {medicine.image ? (
-            <Image
-              src={medicine.image}
-              alt={medicine.name}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
-              No Image
-            </div>
-          )}
+    <Card className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-sm transition-all duration-300 hover:shadow-lg">
+      {/* Image Container */}
+      <div className="relative h-48 w-full overflow-hidden bg-muted">
+        {medicine.image ? (
+          <Image
+            src={medicine.image}
+            alt={medicine.name}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground italic">
+            No Image Available
+          </div>
+        )}
 
-          {/* Stock badge */}
-          <Badge
-            className="absolute left-3 top-3"
-            variant={medicine.stock > 0 ? "default" : "destructive"}
-          >
-            {medicine.stock > 0
-              ? `In Stock: ${medicine.stock}`
-              : "Out of Stock"}
-          </Badge>
-        </div>
+        {/* Stock Status Badge */}
+        <Badge
+          className="absolute left-3 top-3 z-10"
+          variant={medicine.stock > 0 ? "secondary" : "destructive"}
+        >
+          {medicine.stock > 0 ? `In Stock: ${medicine.stock}` : "Out of Stock"}
+        </Badge>
+      </div>
 
-        {/* Content */}
-        <CardHeader className="pb-0">
-          <CardTitle className="line-clamp-2 text-lg font-semibold">
+      {/* Medicine Info */}
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start gap-2">
+          <CardTitle className="line-clamp-2 text-lg font-bold">
             {medicine.name}
           </CardTitle>
-        </CardHeader>
+        </div>
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+          {medicine.manufacturer}
+        </p>
+      </CardHeader>
 
-        <CardContent className="mt-auto text-xl font-bold text-primary">
-          ৳ {medicine.price}
-        </CardContent>
+      <CardContent className="mt-auto">
+        <div className="flex items-baseline gap-1">
+          <span className="text-2xl font-black text-primary">
+            ৳{medicine.price}
+          </span>
+          <span className="text-xs text-muted-foreground">/ unit</span>
+        </div>
+      </CardContent>
 
-        {/* Actions */}
-        <CardFooter className="flex gap-1 border-t px-4">
-          <Button
-            className="flex-1"
-            disabled={medicine.stock === 0}
-            onClick={handleAddToCart}
-          >
-            Add to Cart
-          </Button>
+      {/* Action Buttons */}
+      <CardFooter className="flex gap-2 border-t bg-slate-50/50 p-4 dark:bg-slate-900/50">
+        <Button
+          className="flex-1 gap-2 font-bold"
+          disabled={medicine.stock === 0}
+          onClick={handleAddToCart}
+        >
+          <ShoppingCart className="h-4 w-4" />
+          Add to Cart
+        </Button>
 
-          <Button variant="outline" asChild>
-            <Link href={`/all-medicine/${medicine.id}`}>
-              <Eye className="mr-2 h-2 w-2" />
-              Details
-            </Link>
-          </Button>
-        </CardFooter>
-      </Card>
-
-      {/* Drawer */}
-      {selectedMedicine && (
-        <MyCard
-          medicine={selectedMedicine}
-          open={isDrawerOpen}
-          setOpen={(value) => {
-            setIsDrawerOpen(value);
-            if (!value) setSelectedMedicine(null); // reset medicine when drawer closes
-          }}
-        />
-      )}
-    </>
+        <Button variant="outline" size="icon" asChild title="View Details">
+          <Link href={`/all-medicine/${medicine.id}`}>
+            <Eye className="h-4 w-4" />
+          </Link>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
