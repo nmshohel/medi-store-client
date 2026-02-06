@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -24,12 +24,15 @@ import {
 } from "lucide-react";
 import { createOrder } from "@/actions/order.action";
 import { toast } from "sonner";
+import { getSession } from "@/actions/user.action";
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const items = JSON.parse(searchParams.get("items") || "[]");
+  const router = useRouter();
 
   const [address, setAddress] = useState("");
+
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
   const subtotal = items.reduce(
@@ -40,8 +43,17 @@ export default function CheckoutPage() {
   const total = subtotal + deliveryFee;
 
   const purchaseInformation = async () => {
+    // check login status
+    const session = await getSession();
+    if (!session.data) {
+      toast.error(session.error?.message);
+      router.push("/login");
+      return;
+    }
+    // check address input
     if (!address) {
       toast.error("Shipping address required");
+
       return;
     }
     const orderData = {
@@ -54,8 +66,6 @@ export default function CheckoutPage() {
     const toastId = toast.loading("Creating order...");
     try {
       const res = await createOrder(orderData);
-      console.log("res", res);
-      console.log("res.data.success", res.data.success);
       if (res.data) {
         toast.success("Order created successfully", { id: toastId });
         localStorage.removeItem("pending_cart_items");

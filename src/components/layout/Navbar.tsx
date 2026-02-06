@@ -47,7 +47,7 @@ interface Navbar1Props {
   menu?: MenuItem[];
   auth?: {
     login: { title: string; url: string };
-    signup: { title: string; url: string };
+    // signup: { title: string; url: string };
   };
 }
 
@@ -65,10 +65,27 @@ const Navbar = ({
   ],
   auth = {
     login: { title: "Login", url: "/login" },
-    signup: { title: "Register", url: "/register" },
+    // signup: { title: "Register", url: "/register" },
   },
   className,
 }: Navbar1Props) => {
+  // check login status
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data } = await getSession();
+        setSession(data);
+      } catch (error) {
+        console.error("Failed to fetch session:", error);
+      }
+    };
+
+    checkAuth();
+  }, []);
+  // end check login status
+
   // --- CART STATES ---
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -134,7 +151,7 @@ const Navbar = ({
       )}
     >
       <div className="container mx-auto px-4">
-        {/* Desktop Menu */}
+        {/* Desktop Menu **************************************************************/}
         <nav className="hidden items-center justify-between lg:flex">
           <div className="flex items-center gap-6">
             <a href={logo.url} className="flex items-center gap-2">
@@ -178,12 +195,12 @@ const Navbar = ({
               <Link href={auth.login.url}>{auth.login.title}</Link>
             </Button>
             <Button asChild size="sm">
-              <Link href={auth.signup.url}>{auth.signup.title}</Link>
+              {/* <Link href={auth.signup.url}>{auth.signup.title}</Link> */}
             </Button>
           </div>
         </nav>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu ********************************************************************/}
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             <a href={logo.url} className="flex items-center gap-2">
@@ -245,7 +262,7 @@ const Navbar = ({
                         <Link href={auth.login.url}>{auth.login.title}</Link>
                       </Button>
                       <Button asChild>
-                        <Link href={auth.signup.url}>{auth.signup.title}</Link>
+                        {/* <Link href={auth.signup.url}>{auth.signup.title}</Link> */}
                       </Button>
                     </div>
                   </div>

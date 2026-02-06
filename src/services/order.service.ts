@@ -162,7 +162,7 @@ createMedicine: async (medicineData: any) => {
 
       const data = await res.json();
  
-
+      console.log("res",res)
       if (data.error) {
         return {
           data: null,

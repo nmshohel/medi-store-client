@@ -16,6 +16,7 @@ type OrderTableProps = {
   ordersData: any[];
 };
 export default function OrderTable({ ordersData }: OrderTableProps) {
+  console.log("Ordder-data", ordersData);
   const [open, setOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const handleUpdateClick = (id: string) => {
@@ -32,8 +33,8 @@ export default function OrderTable({ ordersData }: OrderTableProps) {
             <TableHead>Name</TableHead>
             <TableHead>Address</TableHead>
             <TableHead>Medicine Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Quantity</TableHead>
+            <TableHead>Total Amount</TableHead>
+            <TableHead>Payment Method</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -45,9 +46,9 @@ export default function OrderTable({ ordersData }: OrderTableProps) {
               <TableCell>{index + 1}</TableCell>
               <TableCell>{item.user.name}</TableCell>
               <TableCell>{item.address}</TableCell>
-              <TableCell>{item.user.name}</TableCell>
-              <TableCell>{item.medicine.price}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
+              <TableCell>{item.user.phone}</TableCell>
+              <TableCell>{item.totalAmount}</TableCell>
+              <TableCell>{item.paymentMethod}</TableCell>
               <TableCell>{item.status}</TableCell>
 
               <TableCell>

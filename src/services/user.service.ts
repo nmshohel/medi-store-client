@@ -17,7 +17,7 @@ export const userServices={
 
             const session=await res.json()
             if(session===null){
-                return {data:null, error:{message:"Session is missing"}}
+                return {data:null, error:{message:"You are not logged in. Please login"}}
             }
 
             return {
