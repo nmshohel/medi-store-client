@@ -73,17 +73,19 @@ const Navbar = ({
 }: Navbar1Props) => {
   // check login status
   const [loggedIn, setLoggedIn] = useState(false);
-  console.log("logged from navbar", loggedIn);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const { data } = await getSession();
-        if (data) {
-          setLoggedIn(true);
-        }
+        setLoggedIn(!!data);
       } catch (error) {
         console.error("Failed to fetch session:", error);
+        setLoggedIn(false);
+      } finally {
+        setAuthLoading(false);
       }
     };
 
@@ -95,8 +97,14 @@ const Navbar = ({
   const router = useRouter();
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    router.push("/login");
+    try {
+      setLogoutLoading(true);
+      await authClient.signOut();
+      setLoggedIn(false);
+      router.push("/login");
+    } finally {
+      setLogoutLoading(false);
+    }
   };
 
   // --- CART STATES ---
@@ -205,12 +213,21 @@ const Navbar = ({
 
             <ModeToggle />
 
-            {loggedIn ? (
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                Logout
+            {authLoading ? (
+              <Button variant="outline" disabled>
+                Loading...
+              </Button>
+            ) : loggedIn ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                disabled={logoutLoading}
+              >
+                {logoutLoading ? "Logging out..." : "Logout"}
               </Button>
             ) : (
-              <Button asChild variant="outline" size="sm">
+              <Button asChild variant="outline">
                 <Link href={auth.login.url}>{auth.login.title}</Link>
               </Button>
             )}
@@ -275,16 +292,24 @@ const Navbar = ({
                       <SearchBox />
                     </div>
                     <div className="flex flex-col gap-3">
-                      <Button asChild variant="outline">
-                        <Link href={auth.login.url}>{auth.login.title}</Link>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </Button>
+                      {authLoading ? (
+                        <Button variant="outline" size="sm" disabled>
+                          Loading...
+                        </Button>
+                      ) : loggedIn ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleLogout}
+                          disabled={logoutLoading}
+                        >
+                          {logoutLoading ? "Logging out..." : "Logout"}
+                        </Button>
+                      ) : (
+                        <Button asChild variant="outline" size="sm">
+                          <Link href={auth.login.url}>{auth.login.title}</Link>
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </SheetContent>

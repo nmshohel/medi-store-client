@@ -11,10 +11,43 @@ const API_URL = env.API_URL;
 export const orderService = {
 getOrders: async function () {
   try {
-    const res = await fetch("http://localhost:5000/api/orders");
+    const cookieStore = await cookies();
+    const res = await fetch("http://localhost:5000/api/orders", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+      });
     
 
     // 1. Check if the HTTP status is 200-299
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({})); // Try to get server error msg
+      return { 
+        data: null, 
+        error: { message: errorData.message || `Error: ${res.status}` } 
+      };
+    }
+
+    const data = await res.json();
+    return { data, error: null };
+
+  } catch (err) {
+    // This catches network failures or JSON parsing errors
+    console.error("Order Service network error:", err);
+    return {
+      data: null,
+      error: { message: "Network error or server is unreachable" },
+    };
+  }
+},
+getMyOrders: async function () {
+  try {
+    const session=await userServices.getSession()
+    const id=session?.data?.user?.id
+    console.log(id)
+    const res = await fetch(`http://localhost:5000/api/orders/my-order/${id}`);
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({})); // Try to get server error msg
       return { 
@@ -162,7 +195,7 @@ createMedicine: async (medicineData: any) => {
 
       const data = await res.json();
  
-      console.log("res",res)
+    
       if (data.error) {
         return {
           data: null,

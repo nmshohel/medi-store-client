@@ -7,11 +7,15 @@ export const customerRoutes:Route[]=[
       items: [
         {
           title: "My Order",
-          url: "",
+          url: "/dashboard",
         },
         {
           title: "Profile",
           url: "/dashboard/profile",
+        },
+        {
+          title: "Track Order",
+          url: "",
         },
 
       ],

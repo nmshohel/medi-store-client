@@ -9,6 +9,9 @@ import { Medicine } from "@/types";
 export const getOrders = async () => {
   return await orderService.getOrders()
 };
+export const getMyOrders = async () => {
+  return await orderService.getMyOrders()
+};
 export const createMedicine = async (data: any) => {
   const res = await medicineService.createMedicine(data);
   // updateTag("blogPosts");
