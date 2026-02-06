@@ -27,11 +27,10 @@ type HomeProps = {
 };
 
 export default async function Home({ searchParams }: HomeProps) {
-  const { category, manufacturer, min, max } = searchParams;
+  const { category, manufacturer, min, max } = await searchParams;
 
   const { data } = await getMedicine();
 
-  console.log("data", data?.data);
   // {
   //     category,
   //     manufacturer,
