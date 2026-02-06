@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
@@ -8,32 +8,50 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
+  CardDescription,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   ShoppingCart,
   Truck,
   CheckCircle2,
   MapPin,
   Wallet,
+  Star,
+  Send,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { createOrder } from "@/actions/order.action";
 import { toast } from "sonner";
 import { getSession } from "@/actions/user.action";
+import { createReview } from "@/actions/review.action";
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const items = JSON.parse(searchParams.get("items") || "[]");
   const router = useRouter();
 
+  // Checkout State
   const [address, setAddress] = useState("");
-
   const [paymentMethod, setPaymentMethod] = useState("cod");
+
+  // Review Modal State
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [rating, setRating] = useState<number>(0);
+  const [hover, setHover] = useState<number>(0);
+  const [reviewComment, setReviewComment] = useState("");
 
   const subtotal = items.reduce(
     (acc: number, item: any) => acc + item.price * item.quantity,
@@ -42,20 +60,43 @@ export default function CheckoutPage() {
   const deliveryFee = items.length > 0 ? 60 : 0;
   const total = subtotal + deliveryFee;
 
+  /**
+   * Function to handle the final review data collection
+   */
+  const handleReviewSubmit = async () => {
+    const finalReviewData = {
+      rating,
+      comment: reviewComment,
+      orderItems: items,
+    };
+
+    try {
+      const res = await createReview(finalReviewData);
+      toast.success("Thank you for your feedback!");
+      setIsReviewOpen(false);
+    } catch {
+      toast.error("Add failed");
+    }
+
+    // Optionally redirect user to home or orders page
+    // router.push("/orders");
+  };
+
   const purchaseInformation = async () => {
-    // check login status
+    // 1. Check login status
     const session = await getSession();
     if (!session.data) {
-      toast.error(session.error?.message);
+      toast.error(session.error?.message || "Please login to continue");
       router.push("/login");
       return;
     }
-    // check address input
+
+    // 2. Check address input
     if (!address) {
       toast.error("Shipping address required");
-
       return;
     }
+
     const orderData = {
       orderItems: items,
       shippingAddress: address,
@@ -69,11 +110,15 @@ export default function CheckoutPage() {
       if (res.data) {
         toast.success("Order created successfully", { id: toastId });
         localStorage.removeItem("pending_cart_items");
+
+        // 3. Open Review Modal on success
+        setIsReviewOpen(true);
       } else {
         toast.error("Order creation failed", { id: toastId });
       }
-    } catch {
+    } catch (err) {
       toast.error("Something went wrong", { id: toastId });
+      console.error(err);
     }
   };
 
@@ -86,9 +131,8 @@ export default function CheckoutPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
-          {/* Compact Info Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Small Shipping Card */}
+            {/* Shipping Card */}
             <Card className="shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -106,7 +150,7 @@ export default function CheckoutPage() {
               </CardContent>
             </Card>
 
-            {/* Small Payment Card */}
+            {/* Payment Card */}
             <Card className="shadow-sm border-primary/20 bg-primary/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -131,7 +175,7 @@ export default function CheckoutPage() {
             </Card>
           </div>
 
-          {/* Review Items Card */}
+          {/* Order Review Items */}
           <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="text-sm font-medium">
@@ -146,7 +190,7 @@ export default function CheckoutPage() {
                 >
                   <div className="flex flex-col">
                     <span className="font-medium">{item.name}</span>
-                    <span className="text-xs text-muted-foreground text-primary">
+                    <span className="text-xs text-primary">
                       Qty: {item.quantity}
                     </span>
                   </div>
@@ -196,6 +240,79 @@ export default function CheckoutPage() {
           </Card>
         </div>
       </div>
+
+      {/* --- REVIEW DIALOG MODAL --- */}
+      <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl font-bold">
+              Excellent!
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Your order has been placed. Would you mind rating your experience?
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col items-center py-4 space-y-6">
+            {/* Star Logic */}
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  className={cn(
+                    "p-1 transition-all duration-75 hover:scale-110 active:scale-90",
+                    (hover || rating) >= star
+                      ? "text-yellow-400"
+                      : "text-slate-200",
+                  )}
+                  onMouseEnter={() => setHover(star)}
+                  onMouseLeave={() => setHover(0)}
+                  onClick={() => setRating(star)}
+                >
+                  <Star
+                    className={cn(
+                      "h-10 w-10",
+                      (hover || rating) >= star ? "fill-current" : "fill-none",
+                    )}
+                  />
+                  <span className="sr-only">Rate {star} stars</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="w-full space-y-2">
+              <Label htmlFor="review" className="text-sm font-medium">
+                Add a comment (Optional)
+              </Label>
+              <Textarea
+                id="review"
+                placeholder="How was the checkout process?"
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                className="resize-none"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto"
+              onClick={() => setIsReviewOpen(false)}
+            >
+              Skip
+            </Button>
+            <Button
+              className="w-full sm:flex-1 gap-2"
+              disabled={rating === 0}
+              onClick={handleReviewSubmit}
+            >
+              <Send className="h-4 w-4" /> Submit Review
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
