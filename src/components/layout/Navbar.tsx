@@ -78,13 +78,9 @@ const Navbar = ({
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // getSession returns the session object directly
-        const session = await getSession();
-
-        if (session) {
+        const { data } = await getSession();
+        if (data) {
           setLoggedIn(true);
-        } else {
-          setLoggedIn(false);
         }
       } catch (error) {
         console.error("Failed to fetch session:", error);
