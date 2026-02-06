@@ -24,6 +24,8 @@ import { useEffect, useState } from "react";
 import { getSession } from "@/actions/user.action";
 import { Medicine } from "@/types";
 import MyCard from "../modules/homepage/MyCard";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 // Extend Medicine type to include quantity for the cart logic
 type CartItem = Medicine & { quantity: number };
@@ -47,7 +49,7 @@ interface Navbar1Props {
   menu?: MenuItem[];
   auth?: {
     login: { title: string; url: string };
-    // signup: { title: string; url: string };
+    // logout: { title: string; url: string };
   };
 }
 
@@ -65,18 +67,25 @@ const Navbar = ({
   ],
   auth = {
     login: { title: "Login", url: "/login" },
-    // signup: { title: "Register", url: "/register" },
+    // logout: { title: "Logout", url: "/logout" },
   },
   className,
 }: Navbar1Props) => {
   // check login status
-  const [session, setSession] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(false);
+  console.log("logged from navbar", loggedIn);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data } = await getSession();
-        setSession(data);
+        // getSession returns the session object directly
+        const session = await getSession();
+
+        if (session) {
+          setLoggedIn(true);
+        } else {
+          setLoggedIn(false);
+        }
       } catch (error) {
         console.error("Failed to fetch session:", error);
       }
@@ -85,6 +94,14 @@ const Navbar = ({
     checkAuth();
   }, []);
   // end check login status
+
+  // logout
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+    router.push("/login");
+  };
 
   // --- CART STATES ---
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -191,12 +208,16 @@ const Navbar = ({
             </div>
 
             <ModeToggle />
-            <Button asChild variant="outline" size="sm">
-              <Link href={auth.login.url}>{auth.login.title}</Link>
-            </Button>
-            <Button asChild size="sm">
-              {/* <Link href={auth.signup.url}>{auth.signup.title}</Link> */}
-            </Button>
+
+            {loggedIn ? (
+              <Button variant="outline" size="sm" onClick={handleLogout}>
+                Logout
+              </Button>
+            ) : (
+              <Button asChild variant="outline" size="sm">
+                <Link href={auth.login.url}>{auth.login.title}</Link>
+              </Button>
+            )}
           </div>
         </nav>
 
@@ -261,8 +282,12 @@ const Navbar = ({
                       <Button asChild variant="outline">
                         <Link href={auth.login.url}>{auth.login.title}</Link>
                       </Button>
-                      <Button asChild>
-                        {/* <Link href={auth.signup.url}>{auth.signup.title}</Link> */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleLogout}
+                      >
+                        Logout
                       </Button>
                     </div>
                   </div>
