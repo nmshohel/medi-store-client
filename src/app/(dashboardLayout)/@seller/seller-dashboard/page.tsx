@@ -1,6 +1,6 @@
 import { getMedicine } from "@/actions/medicine.action";
 import MedicineTable from "@/components/modules/seller/MedicineTable";
-
+export const dynamic = "force-dynamic";
 export default async function SellerDashboard() {
   const response = await getMedicine();
   const medicineData = response.data?.data || [];

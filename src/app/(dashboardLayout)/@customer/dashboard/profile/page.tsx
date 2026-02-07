@@ -1,6 +1,6 @@
 import { getSession, getSingleUser } from "@/actions/user.action";
 import UpdateProfile from "@/components/modules/customer/UpdateProfile";
-
+export const dynamic = "force-dynamic";
 export default async function Profile() {
   const userData = await getSession();
   const user = userData?.data?.user;

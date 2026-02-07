@@ -1,6 +1,6 @@
 import { getMyOrders, getOrders } from "@/actions/order.action";
 import OrderTable from "@/components/modules/customer/OrderTable";
-
+export const dynamic = "force-dynamic";
 export default async function CustomerDashboard() {
   const response = await getOrders();
   console.log("res", response);

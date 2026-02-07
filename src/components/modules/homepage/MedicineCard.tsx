@@ -104,17 +104,25 @@ export default function MedicineCard({ medicine }: MedicineCardProps) {
       </CardContent>
 
       {/* Action Buttons */}
-      <CardFooter className="flex gap-2 border-t bg-slate-50/50 p-4 dark:bg-slate-900/50">
+      <CardFooter className="flex gap-2 border-t bg-slate-50/50 p-2 dark:bg-slate-900/50">
         <Button
-          className="flex-1 gap-2 font-bold"
+          variant="default"
+          size="sm"
+          className="flex-1 h-8 gap-2 text-xs font-bold" // h-8 manually forces a smaller height
           disabled={medicine.stock === 0}
           onClick={handleAddToCart}
         >
-          <ShoppingCart className="h-4 w-4" />
+          <ShoppingCart className="h-3 w-3" />
           Add to Cart
         </Button>
 
-        <Button variant="outline" size="icon" asChild title="View Details">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          asChild
+          title="View Details"
+        >
           <Link href={`/all-medicine/${medicine.id}`}>
             <Eye className="h-4 w-4" />
           </Link>
